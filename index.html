@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Cooking To-Do Planner</title>
     <style>
-        /* Modern CSS Variables for easy theming */
         :root {
             --primary: #FF6B6B;
             --secondary: #4ECDC4;
@@ -18,7 +17,6 @@
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            /* Attractive modern gradient background */
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             color: var(--dark);
             margin: 0;
@@ -26,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* Glassmorphism Card Effect */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -87,7 +84,6 @@
             box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.1);
         }
 
-        /* Button Styling */
         .btn-group {
             display: flex;
             gap: 15px;
@@ -120,16 +116,6 @@
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
-        .btn-secondary {
-            background-color: #dfe6e9;
-            color: var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background-color: #b2bec3;
-        }
-
-        /* Results UI */
         .results-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -160,7 +146,6 @@
             font-size: 1.2em;
         }
 
-        /* Tables & Lists */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -203,7 +188,6 @@
             display: none !important;
         }
 
-        /* Dynamic Badges */
         .badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -221,14 +205,9 @@
             background: var(--danger);
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .results-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .btn-group {
-                flex-direction: column;
             }
         }
     </style>
@@ -254,11 +233,10 @@
         </div>
 
         <div class="btn-group">
+            <!-- The button stays visible now so you can keep updating -->
             <button class="btn-primary" id="generateBtn">✨ Generate Smart Plan</button>
-            <button class="btn-secondary hidden" id="resetBtn">🔄 Plan Another Day</button>
         </div>
 
-        <!-- Results Section -->
         <div id="resultArea" class="results-grid hidden">
 
             <div class="card full-width">
@@ -283,9 +261,6 @@
     </div>
 
     <script>
-        /**
-         * 1. DATA MODEL (Demonstrating clean OOP architecture)
-         */
         class MealPlannerEngine {
             constructor(dayProfile, maxBudget) {
                 this.dayProfile = dayProfile.toLowerCase();
@@ -295,12 +270,10 @@
             generateData() {
                 const isBusy = this.dayProfile.includes('busy') || this.dayProfile.includes('work');
 
-                // Dynamic Meal Mapping
                 const meals = isBusy ?
                     { breakfast: "Overnight Oats with Chia & Honey 🥣", lunch: "One-Pot Quinoa & Veggie Bowl 🍱", dinner: "Comforting Dal Khichdi 🍲" } :
                     { breakfast: "Avocado Toast & Poached Eggs 🍳", lunch: "Hearty Multi-grain Veggie Thali 🍛", dinner: "Grilled Protein Salad 🥗" };
 
-                // Itemized Cost Mapping
                 const groceries = isBusy ? [
                     { item: "Rolled Oats & Chia", cost: 80 },
                     { item: "Quinoa / Rice", cost: 110 },
@@ -314,7 +287,6 @@
                     { item: "Premium Protein (Chicken/Tofu)", cost: 160 }
                 ];
 
-                // Adaptive Substitutions
                 const substitutions = isBusy ?
                     ["Swap Quinoa for standard Rice (Saves ₹40)", "Use canned beans if out of Lentils"] :
                     ["Swap Avocado for Peanut Butter (Saves ₹100)", "Swap premium protein for Soya Chunks (Saves ₹80)"];
@@ -323,50 +295,31 @@
             }
         }
 
-        /**
-         * 2. UI CONTROLLER (Handles DOM manipulation and state)
-         */
         const AppController = {
             init() {
                 document.getElementById('generateBtn').addEventListener('click', () => this.handleGenerate());
-                document.getElementById('resetBtn').addEventListener('click', () => this.handleReset());
             },
 
             handleGenerate() {
                 const descInput = document.getElementById('dayDescription').value || "regular day";
                 const budgetInput = parseFloat(document.getElementById('budget').value) || 500;
 
-                // Initialize Engine
                 const engine = new MealPlannerEngine(descInput, budgetInput);
                 const planData = engine.generateData();
 
                 this.renderResults(planData, budgetInput);
 
-                // Update Buttons
-                document.getElementById('generateBtn').classList.add('hidden');
-                document.getElementById('resetBtn').classList.remove('hidden');
-            },
-
-            handleReset() {
-                // Clear Form State
-                document.getElementById('dayDescription').value = "";
-                document.getElementById('budget').value = "500";
-                document.getElementById('resultArea').classList.add('hidden');
-
-                // Reset Buttons
-                document.getElementById('generateBtn').classList.remove('hidden');
-                document.getElementById('resetBtn').classList.add('hidden');
+                // Update button text to indicate the form is still active
+                document.getElementById('generateBtn').innerHTML = "✨ Update Smart Plan";
             },
 
             renderResults(data, maxBudget) {
-                // 1. Render Meals
                 document.getElementById('mealPlan').innerHTML = `
             <p><strong>Breakfast:</strong> ${data.meals.breakfast}</p>
             <p><strong>Lunch:</strong> ${data.meals.lunch}</p>
             <p><strong>Dinner:</strong> ${data.meals.dinner}</p>
         `;
 
-                // 2. Render Groceries with Itemized Math
                 let totalCost = 0;
                 let tableHTML = `<table><thead><tr><th>Ingredient</th><th>Est. Cost</th></tr></thead><tbody>`;
 
@@ -378,10 +331,8 @@
                 tableHTML += `</tbody><tfoot><tr class="total-row"><td>Total Basket Cost</td><td>₹${totalCost.toFixed(2)}</td></tr></tfoot></table>`;
                 document.getElementById('groceryList').innerHTML = tableHTML;
 
-                // 3. Render Substitutions
                 document.getElementById('substitutions').innerHTML = `<ul>` + data.substitutions.map(s => `<li>${s}</li>`).join('') + `</ul>`;
 
-                // 4. Render Budget Logic
                 const isFeasible = totalCost <= maxBudget;
                 const badgeHTML = isFeasible ? `<span class="badge success">FEASIBLE</span>` : `<span class="badge danger">OVER BUDGET</span>`;
 
@@ -395,12 +346,10 @@
             </p>
         `;
 
-                // Reveal UI
                 document.getElementById('resultArea').classList.remove('hidden');
             }
         };
 
-        // Initialize app when DOM loads
         document.addEventListener('DOMContentLoaded', () => AppController.init());
     </script>
 
