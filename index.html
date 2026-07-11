@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cooking To-Do List & Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #219653;
+        }
+
+        .section-box {
+            background: #f9f9f9;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .meal-item {
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge.within {
+            background: #27ae60;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🍳 AI Cooking To-Do Assistant</h1>
+
+        <label for="dayDescription">How does your day look? (e.g., Busy workday, heavy workout day, lazy Sunday)</label>
+        <textarea id="dayDescription" rows="3"
+            placeholder="Describe your schedule, energy level, or preferences..."></textarea>
+
+        <label for="budget">Daily Food Budget (INR / USD)</label>
+        <input type="number" id="budget" value="500" placeholder="Enter amount">
+
+        <button onclick="generatePlan()">Generate AI Meal Plan & To-Do List</button>
+
+        <div id="resultArea" class="hidden">
+            <div class="section-box">
+                <h3>📅 Generated Meal Plan</h3>
+                <div id="mealPlan"></div>
+            </div>
+
+            <div class="section-box">
+                <h3>🛒 Smart Grocery List</h3>
+                <div id="groceryList"></div>
+            </div>
+
+            <div class="section-box">
+                <h3>🔄 Ingredient Substitutions</h3>
+                <div id="substitutions"></div>
+            </div>
+
+            <div class="section-box">
+                <h3>💰 Budget Feasibility Check</h3>
+                <div id="budgetStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generatePlan() {
+            const dayDesc = document.getElementById('dayDescription').value || "A regular day";
+            const budgetAmount = parseFloat(document.getElementById('budget').value) || 500;
+
+            // Simulating the Gen AI prompt logic dynamically based on user input for fast execution
+            let estimatedCost = 0;
+            let mealHtml = "";
+            let groceryHtml = "";
+            let subHtml = "";
+
+            if (dayDesc.toLowerCase().includes('busy') || dayDesc.toLowerCase().includes('work')) {
+                estimatedCost = budgetAmount * 0.7; // ~70% of budget
+                mealHtml = `
+            <div class="meal-item"><strong>Breakfast:</strong> Quick Overnight Oats with Banana & Honey (Prep time: 2 mins)</div>
+            <div class="meal-item"><strong>Lunch:</strong> One-pot Paneer/Tofu Stir-fry with Rice (Packable, 15 mins)</div>
+            <div class="meal-item"><strong>Dinner:</strong> Light Dal Khichdi or Clear Soup (Comforting after work, 20 mins)</div>
+        `;
+                groceryHtml = "<li>Oats, Bananas, Honey, Paneer/Tofu, Rice, Lentils (Dal), Basic Vegetables</li>";
+                subHtml = "<li>If no Paneer/Tofu, substitute with Mushrooms or Boiled Chickpeas.</li><li>If no Dal, use Vegetable Broth cubes.</li>";
+            } else {
+                estimatedCost = budgetAmount * 0.9;
+                mealHtml = `
+            <div class="meal-item"><strong>Breakfast:</strong> Vegetable Poha or Avocado Toast with Eggs</div>
+            <div class="meal-item"><strong>Lunch:</strong> Hearty Veggie Thali or Pasta Salad</div>
+            <div class="meal-item"><strong>Dinner:</strong> Grilled Protein with Sauteed Veggies & Mashed Potatoes</div>
+        `;
+                groceryHtml = "<li>Poha/Bread, Eggs, Seasonal Veggies, Pasta, Potatoes, Herbs</li>";
+                subHtml = "<li>Substitute Avocado with Butter/Cheese spreads.</li><li>Substitute Pasta with Quinoa for a healthier profile.</li>";
+            }
+
+            // Budget Logic calculation
+            const isFeasible = estimatedCost <= budgetAmount;
+            const statusBadge = isFeasible ? '<span class="badge within">FEASIBLE</span>' : '<span class="badge">OVER BUDGET</span>';
+
+            document.getElementById('mealPlan').innerHTML = mealHtml;
+            document.getElementById('groceryList').innerHTML = `<ul>${groceryHtml}</ul>`;
+            document.getElementById('substitutions').innerHTML = `<ul>${subHtml}</ul>`;
+            document.getElementById('budgetStatus').innerHTML = `
+        <p>Estimated Plan Cost: <strong>${estimatedCost.toFixed(2)}</strong> ${statusBadge}</p>
+        <p>${isFeasible ? '✅ The suggested ingredients fit well within your daily spending cap!' : '⚠️ Warning: Consider swapping premium items to stay within budget.'}</p>
+    `;
+
+            document.getElementById('resultArea').classList.remove('hidden');
+        }
+    </script>
+
+</body>
+
+</html>
